@@ -1,0 +1,20 @@
+# Below script is for lab use only, do not use in production environments!
+
+# Execute below on AVDLAB-DC01
+
+New-Item -Path "c:\" -Name "FSLProfiles" -ItemType "directory"
+New-SmbShare -Name "FSLProfiles" -Path "C:\FSLProfiles" -ChangeAccess "Users" -FullAccess "Administrators"
+
+# Execute below on AVDLAB-Core-0
+
+Set-ItemProperty -Path HKLM:\Software\FSLogix\Profiles -Name "Enabled" -Type "Dword" -Value "1"
+
+new-ItemProperty -Path HKLM:\Software\FSLogix\Profiles -Name "VHDLocations" -Value "\\AVDLAB-DC01\FSLProfiles" -PropertyType MultiString -Force
+
+Set-ItemProperty -Path HKLM:\Software\FSLogix\Profiles -Name "DeleteLocalProfileWhenVHDShouldApply" -Type "Dword" -Value "1"
+
+Set-ItemProperty -Path HKLM:\Software\FSLogix\Profiles -Name "FlipFlopProfileDirectoryName" -Type "Dword" -Value "1"
+
+Set-ItemProperty -Path HKLM:\Software\FSLogix\Profiles -Name "VolumeType" -Type "String" -Value "VHDX"
+
+Restart-service frxsvc
